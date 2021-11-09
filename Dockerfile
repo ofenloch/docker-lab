@@ -18,9 +18,10 @@ WORKDIR "/workspace"
 # This is for my apt-cacher (adjust to your needs):
 COPY apt.conf.proxy /etc/apt/apt.conf.d/01proxy
 
-
+# set environment variable for apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
+# configure a user inside the container (adjust to your needs)
 ENV NEW_USER_NAME=ofenloch
 ENV NEW_UID=6534
 ENV NEW_GID=4356
@@ -28,7 +29,7 @@ ENV HOME_DIRECTORY=/home/${NEW_USER_NAME}
 ENV SHELL=/bin/bash
 ENV NEW_PASSWD_ENCRYPTED=54321
 
-
+# install some software  (adjust to your needs)
 RUN /usr/bin/apt-get update && \
     /usr/bin/apt-get --yes --no-install-recommends --fix-broken --fix-missing install \
         apt-utils && \
@@ -81,3 +82,4 @@ ENTRYPOINT [ "/bin/bash", "-c" ]
 #             docker run --rm -v $(pwd):/workspace cpp-dev-openmodelica:0.0.1 "sleep infinity"
 # and then go into the container with something like
 #             docker exec -it beautiful_hugle bash
+# The name of the container cahnges at each startup, check with `docker ps`.
