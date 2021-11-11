@@ -16,7 +16,7 @@ VOLUME "/workspace"
 WORKDIR "/workspace"
 
 # This is for my apt-cacher (adjust to your needs):
-COPY apt.conf.proxy /etc/apt/apt.conf.d/01proxy
+COPY ./assets/apt.conf.proxy /etc/apt/apt.conf.d/01proxy
 
 # set environment variable for apt-get
 ENV DEBIAN_FRONTEND=noninteractive
@@ -27,7 +27,10 @@ ENV NEW_UID=6534
 ENV NEW_GID=4356
 ENV HOME_DIRECTORY=/home/${NEW_USER_NAME}
 ENV SHELL=/bin/bash
-ENV NEW_PASSWD_ENCRYPTED=54321
+# create an encrypted passwort with
+#     echo "MyPassword" | /usr/bin/openssl passwd -1 -stdin
+# and save the result in NEW_PASSWD_ENCRYPTED
+ENV NEW_PASSWD_ENCRYPTED="$1$LFpGO69v$WuxvOirMbMc2LTGulKdsr/"
 
 # install some software  (adjust to your needs)
 RUN /usr/bin/apt-get update && \
