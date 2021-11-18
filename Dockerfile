@@ -4,16 +4,16 @@ FROM debian:11.1
 #
 # build the image                        docker build -t docker-lab:0.0.1 .
 #
-# execute a command in the container     docker run --rm -it -v $(pwd):/workspace docker-lab:0.0.1 "ls -hal /workspace"
+# execute a command in the container     docker run --rm -it -v $(pwd):/workspaces docker-lab:0.0.1 "ls -hal /workspaces"
 #
 
 
 LABEL maintainer="Oliver Ofenloch <57812959+ofenloch@users.noreply.github.com>"
 LABEL version="0.0.1"
 
-VOLUME "/workspace"
+VOLUME "/workspaces"
 
-WORKDIR "/workspace"
+WORKDIR "/workspaces"
 
 # This is for my apt-cacher (adjust to your needs):
 COPY ./assets/apt.conf.proxy /etc/apt/apt.conf.d/01proxy
@@ -73,8 +73,8 @@ USER ${NEW_USER_NAME}:${NEW_USER_NAME}
 #
 # This means: The container executes /bin/bash -c "the given argument" and terminates after the command is done.
 # So, calling 
-#              docker run --rm -it -v $(pwd):/workspace cpp-dev:0.0.1 "ls -hal /workspace"
-# starts the container, runs the given command (i.e. "ls -hal /workspace") in bash and terminates.
+#              docker run --rm -it -v $(pwd):/workspaces cpp-dev:0.0.1 "ls -hal /workspaces"
+# starts the container, runs the given command (i.e. "ls -hal /workspaces") in bash and terminates.
 #
 # To keep the conatiner alive, we would need an ENTRYPOINT that does never finish ...
 #
@@ -82,7 +82,7 @@ USER ${NEW_USER_NAME}:${NEW_USER_NAME}
 ENTRYPOINT [ "/bin/bash", "-c" ]
 
 # We could do this, for example:
-#             docker run --rm -v $(pwd):/workspace cpp-dev-openmodelica:0.0.1 "sleep infinity"
+#             docker run --rm -v $(pwd):/workspaces cpp-dev-openmodelica:0.0.1 "sleep infinity"
 # and then go into the container with something like
 #             docker exec -it beautiful_hugle bash
 # The name of the container cahnges at each startup, check with `docker ps`.

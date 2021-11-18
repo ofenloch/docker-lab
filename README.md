@@ -9,7 +9,7 @@ To build the image described by **Dockerfile** run
 
 To test / use the image (i.e. run a container) do something like this
 
-`docker run --rm -it -v $(pwd):/workspace docker-lab:0.0.1 "ls -hal /workspace"`
+`docker run --rm -it -v $(pwd):/workspaces docker-lab:0.0.1 "ls -hal /workspaces"`
 
 
 ## Example Use Case
@@ -20,7 +20,7 @@ This project contains a copy of of [Jim Kirkbride](https://github.com/jameskbrid
 
 Run
 
-`docker run --rm -it -v $(pwd):/workspace docker-lab:0.0.1 "cd cmake-hello-world && cmake -S . -B build && cmake --build build"`
+`docker run --rm -it -v $(pwd):/workspaces docker-lab:0.0.1 "cd cmake-hello-world && cmake -S . -B build && cmake --build build"`
 
 in this directory to build [Jim Kirkbride](https://github.com/jameskbride)'s project inside the container.
 
