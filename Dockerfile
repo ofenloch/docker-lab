@@ -33,16 +33,16 @@ RUN /usr/bin/apt-get update && \
     /usr/bin/apt-get --yes --no-install-recommends --fix-broken --fix-missing install \
         apt-utils && \
     /usr/bin/apt-get --yes --no-install-recommends --fix-broken --fix-missing install \
-        build-essential \
-        gcc \
-        g++ \
-        cmake \
-        ccache \
         bash \
+        build-essential \
+        ccache \
+        cmake \
         cppcheck \
+        doxygen \
+        g++ \
+        gcc \
         openssl \
-        pwgen \
-        doxygen && \
+        pwgen && \
     /bin/rm -rf /var/cache/apt/*
 
 RUN NEW_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
