@@ -27,10 +27,6 @@ ENV NEW_UID=6534
 ENV NEW_GID=4356
 ENV HOME_DIRECTORY=/home/${NEW_USER_NAME}
 ENV SHELL=/bin/bash
-# create an encrypted passwort with
-#     echo "MyPassword" | /usr/bin/openssl passwd -1 -stdin
-# and save the result in NEW_PASSWD_ENCRYPTED
-ENV NEW_PASSWD_ENCRYPTED="$1$LFpGO69v$WuxvOirMbMc2LTGulKdsr/"
 
 # install some software  (adjust to your needs)
 RUN /usr/bin/apt-get update && \
@@ -44,8 +40,16 @@ RUN /usr/bin/apt-get update && \
         ccache \
         bash \
         cppcheck \
+        openssl \
+        pwgen \
         doxygen && \
     /bin/rm -rf /var/cache/apt/*
+
+RUN NEW_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
+    NEW_PASSWD_ENCRYPTED="$(echo ${NEW_PASSWD} | /usr/bin/openssl passwd -1 -stdin )" && \
+    echo "NEW_USER_NAME        = ${NEW_USER_NAME}" > /root/${NEW_USER_NAME}-password.txt && \
+    echo "NEW_PASSWD           = ${NEW_PASSWD}" >> /root/${NEW_USER_NAME}-password.txt && \
+    echo "NEW_PASSWD_ENCRYPTED = ${NEW_PASSWD_ENCRYPTED}" >> /root/${NEW_USER_NAME}-password.txt 
 
 
 RUN /usr/sbin/groupadd --force --gid ${NEW_GID} ${NEW_USER_NAME} && \
