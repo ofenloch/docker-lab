@@ -22,11 +22,16 @@ COPY ./assets/apt.conf.proxy /etc/apt/apt.conf.d/01proxy
 ENV DEBIAN_FRONTEND=noninteractive
 
 # configure a user inside the container (adjust to your needs)
-ENV NEW_USER_NAME=ofenloch
-ENV NEW_UID=6534
-ENV NEW_GID=4356
-ENV HOME_DIRECTORY=/home/${NEW_USER_NAME}
-ENV SHELL=/bin/bash
+ARG NEW_USER_NAME="ofenloch"
+ARG NEW_UID="6534"
+ARG NEW_GID="4356"
+ARG HOME_DIRECTORY="/home/${NEW_USER_NAME}"
+ARG SHELL="/bin/bash"
+ENV NEW_USER_NAME=${NEW_USER_NAME}
+ENV NEW_UID=${NEW_UID}
+ENV NEW_GID=${NEW_GID}
+ENV HOME_DIRECTORY=${HOME_DIRECTORY}
+ENV SHELL=${SHELL}
 
 # install some software  (adjust to your needs)
 RUN /usr/bin/apt-get update && \
@@ -52,7 +57,8 @@ RUN NEW_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
     echo "NEW_PASSWD_ENCRYPTED = ${NEW_PASSWD_ENCRYPTED}" >> /root/${NEW_USER_NAME}-password.txt 
 
 
-RUN /usr/sbin/groupadd --force --gid ${NEW_GID} ${NEW_USER_NAME} && \
+RUN echo "creating user ${NEW_USER_NAME}:${NEW_USER_NAME} (${NEW_UID}:${NEW_GID}) ..." && \
+    /usr/sbin/groupadd --force --gid ${NEW_GID} ${NEW_USER_NAME} && \
     /usr/sbin/useradd --create-home --gid=${NEW_GID} --uid=${NEW_UID} \
     --shell=${SHELL} --home-dir=${HOME_DIRECTORY} \
     --password=${NEW_PASSWD_ENCRYPTED} ${NEW_USER_NAME}
