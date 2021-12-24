@@ -1,16 +1,16 @@
 # syntax=docker/dockerfile:1
-FROM debian:11.1
+FROM debian:11.1 AS docker-lab-base
 
 #
 # build the image                        
-#           docker build -t docker-lab:0.0.1 .
+#           docker build -t docker-lab:0.0.2 .
 #
 # execute a command in the container
-#           docker run --rm --namt docker-lab -it -v $(pwd):/workspaces docker-lab:0.0.1 "ls -hal /workspaces"
+#           docker run --rm --namt docker-lab -it -v $(pwd):/workspaces docker-lab:0.0.2 "ls -hal /workspaces"
 #
 
 LABEL maintainer="Oliver Ofenloch <57812959+ofenloch@users.noreply.github.com>"
-LABEL version="0.0.1"
+LABEL version="0.0.2"
 
 # The VOLUME instruction creates a mount point with the specified name and 
 # marks it as holding externally mounted volumes from native host or other 
@@ -58,14 +58,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 # reduces the risk of accidentally leaking sensitive authentication information in an HTTP_PROXY variable.
 
 
-# configure a user inside the container (adjust to your needs):
-ARG USER_NAME="ofenloch"
-ARG USER_GROUP="ofenloch"
-ARG USER_UID="6534"
-ARG USER_GID="4356"
-ARG USER_HOME="/home/${USER_NAME}"
-ARG USER_SHELL="/bin/bash"
-
 # install some software (adjust to your needs):
 RUN /usr/bin/apt-get update && \
     /usr/bin/apt-get --yes --no-install-recommends --fix-broken --fix-missing install \
@@ -82,6 +74,15 @@ RUN /usr/bin/apt-get update && \
         openssl \
         pwgen && \
     /bin/rm -rf /var/cache/apt/*
+
+FROM docker-lab-base
+# configure a user inside the container (adjust to your needs):
+ARG USER_NAME="ofenloch"
+ARG USER_GROUP="ofenloch"
+ARG USER_UID="6534"
+ARG USER_GID="4356"
+ARG USER_HOME="/home/${USER_NAME}"
+ARG USER_SHELL="/bin/bash"
 
 # create the user:
 RUN USER_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
@@ -120,7 +121,7 @@ USER ${USER_NAME}:${USER_NAME}
 #
 # This means: The container executes /bin/bash -c "the given argument" and terminates after the command is done.
 # So, calling 
-#              docker run --rm -it -v $(pwd):/workspaces cpp-dev:0.0.1 "ls -hal /workspaces"
+#              docker run --rm -it -v $(pwd):/workspaces cpp-dev:0.0.2 "ls -hal /workspaces"
 # starts the container, runs the given command (i.e. "ls -hal /workspaces") in bash and terminates.
 #
 # To keep the conatiner alive, we would need an ENTRYPOINT that does never finish ...
@@ -129,7 +130,7 @@ USER ${USER_NAME}:${USER_NAME}
 ENTRYPOINT [ "/bin/bash", "-c" ]
 
 # We could do this, for example:
-#             docker run --rm --name test -v $(pwd):/workspaces docker-lab:0.0.1 "sleep infinity"
+#             docker run --rm --name test -v $(pwd):/workspaces docker-lab:0.0.2 "sleep infinity"
 # and then go into the container with something like
 #             docker exec -it test bash
 #
