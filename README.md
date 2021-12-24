@@ -57,3 +57,16 @@ all stopped containers’ writable layers use `docker container prune`.
 Volumes can be used by one or more containers, and take up space on the Docker host. Volumes are never 
 removed automatically, because to do so could destroy data. To remove all unused volumes run
 `docker volume prune`.
+
+## Stop all running containers
+
+    docker stop $(docker ps -q)
+
+## List "dangling" images
+
+    docker images -f "dangling=true"
+
+## Delete "dangling" images
+
+    docker rmi -f $(docker images -f "dangling=true" -q)
+
