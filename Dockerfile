@@ -12,29 +12,10 @@ FROM debian:11.1 AS docker-lab-base
 LABEL maintainer="Oliver Ofenloch <57812959+ofenloch@users.noreply.github.com>"
 LABEL version="0.0.2"
 
-# The VOLUME instruction creates a mount point with the specified name and 
-# marks it as holding externally mounted volumes from native host or other 
-# containers. The value can be a JSON array, VOLUME ["/var/log/"], or a 
-# plain string with multiple arguments, such as VOLUME /var/log or 
-# VOLUME /var/log /var/db. For more information/examples and mounting 
-# instructions via the Docker client, refer to 
-# [Share Directories via Volumes](https://docs.docker.com/storage/volumes/) documentation.
-#
-# The docker run command initializes the newly created volume with any data 
-# that exists at the specified location within the base image.
-VOLUME "/workspaces"
-
-# The WORKDIR instruction sets the working directory for any RUN, CMD, 
-# ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile. 
-# If the WORKDIR doesn’t exist, it will be created even if it’s not used 
-# in any subsequent Dockerfile instruction.
-# The WORKDIR instruction can be used multiple times in a Dockerfile. If a 
-# relative path is provided, it will be relative to the path of the previous 
-# WORKDIR instruction.
-WORKDIR "/workspaces"
-
 # This is for my apt-cacher (adjust to your needs):
 COPY ./assets/apt.conf.proxy /etc/apt/apt.conf.d/01proxy
+# TODO: I really would like to move this out of docker-lab-base. But then
+# (re-)building docker-lab-base wouldn't use my apt-cacher ...
 
 # set environment variable for apt-get:
 ENV DEBIAN_FRONTEND=noninteractive
@@ -102,6 +83,27 @@ RUN USER_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
     --password=${USER_PASSWD_ENCRYPTED} ${USER_NAME}
 
 USER ${USER_NAME}:${USER_NAME}
+
+# The VOLUME instruction creates a mount point with the specified name and 
+# marks it as holding externally mounted volumes from native host or other 
+# containers. The value can be a JSON array, VOLUME ["/var/log/"], or a 
+# plain string with multiple arguments, such as VOLUME /var/log or 
+# VOLUME /var/log /var/db. For more information/examples and mounting 
+# instructions via the Docker client, refer to 
+# [Share Directories via Volumes](https://docs.docker.com/storage/volumes/) documentation.
+#
+# The docker run command initializes the newly created volume with any data 
+# that exists at the specified location within the base image.
+VOLUME "/workspaces"
+
+# The WORKDIR instruction sets the working directory for any RUN, CMD, 
+# ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile. 
+# If the WORKDIR doesn’t exist, it will be created even if it’s not used 
+# in any subsequent Dockerfile instruction.
+# The WORKDIR instruction can be used multiple times in a Dockerfile. If a 
+# relative path is provided, it will be relative to the path of the previous 
+# WORKDIR instruction.
+WORKDIR "/workspaces"
 
 # Define the ENTRYPOINT
 #
