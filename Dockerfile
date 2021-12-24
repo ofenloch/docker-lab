@@ -27,11 +27,6 @@ ARG NEW_UID="6534"
 ARG NEW_GID="4356"
 ARG HOME_DIRECTORY="/home/${NEW_USER_NAME}"
 ARG SHELL="/bin/bash"
-ENV NEW_USER_NAME=${NEW_USER_NAME}
-ENV NEW_UID=${NEW_UID}
-ENV NEW_GID=${NEW_GID}
-ENV HOME_DIRECTORY=${HOME_DIRECTORY}
-ENV SHELL=${SHELL}
 
 # install some software  (adjust to your needs)
 RUN /usr/bin/apt-get update && \
