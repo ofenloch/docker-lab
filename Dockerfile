@@ -45,14 +45,13 @@ RUN /usr/bin/apt-get update && \
         pwgen && \
     /bin/rm -rf /var/cache/apt/*
 
+# create the user:
 RUN NEW_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
     NEW_PASSWD_ENCRYPTED="$(echo ${NEW_PASSWD} | /usr/bin/openssl passwd -1 -stdin )" && \
     echo "NEW_USER_NAME        = ${NEW_USER_NAME}" > /root/${NEW_USER_NAME}-password.txt && \
     echo "NEW_PASSWD           = ${NEW_PASSWD}" >> /root/${NEW_USER_NAME}-password.txt && \
-    echo "NEW_PASSWD_ENCRYPTED = ${NEW_PASSWD_ENCRYPTED}" >> /root/${NEW_USER_NAME}-password.txt 
-
-
-RUN echo "creating user ${NEW_USER_NAME}:${NEW_USER_NAME} (${NEW_UID}:${NEW_GID}) ..." && \
+    echo "NEW_PASSWD_ENCRYPTED = ${NEW_PASSWD_ENCRYPTED}" >> /root/${NEW_USER_NAME}-password.txt && \
+    echo "creating user ${NEW_USER_NAME}:${NEW_USER_NAME} (${NEW_UID}:${NEW_GID}) ..." && \
     /usr/sbin/groupadd --force --gid ${NEW_GID} ${NEW_USER_NAME} && \
     /usr/sbin/useradd --create-home --gid=${NEW_GID} --uid=${NEW_UID} \
     --shell=${SHELL} --home-dir=${HOME_DIRECTORY} \
