@@ -59,11 +59,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 
 # configure a user inside the container (adjust to your needs):
-ARG NEW_USER_NAME="ofenloch"
-ARG NEW_UID="6534"
-ARG NEW_GID="4356"
-ARG HOME_DIRECTORY="/home/${NEW_USER_NAME}"
-ARG SHELL="/bin/bash"
+ARG USER_NAME="ofenloch"
+ARG USER_GROUP="ofenloch"
+ARG USER_UID="6534"
+ARG USER_GID="4356"
+ARG USER_HOME="/home/${USER_NAME}"
+ARG USER_SHELL="/bin/bash"
 
 # install some software (adjust to your needs):
 RUN /usr/bin/apt-get update && \
@@ -83,18 +84,23 @@ RUN /usr/bin/apt-get update && \
     /bin/rm -rf /var/cache/apt/*
 
 # create the user:
-RUN NEW_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
-    NEW_PASSWD_ENCRYPTED="$(echo ${NEW_PASSWD} | /usr/bin/openssl passwd -1 -stdin )" && \
-    echo "NEW_USER_NAME        = ${NEW_USER_NAME}" > /root/${NEW_USER_NAME}-password.txt && \
-    echo "NEW_PASSWD           = ${NEW_PASSWD}" >> /root/${NEW_USER_NAME}-password.txt && \
-    echo "NEW_PASSWD_ENCRYPTED = ${NEW_PASSWD_ENCRYPTED}" >> /root/${NEW_USER_NAME}-password.txt && \
-    echo "creating user ${NEW_USER_NAME}:${NEW_USER_NAME} (${NEW_UID}:${NEW_GID}) ..." && \
-    /usr/sbin/groupadd --force --gid ${NEW_GID} ${NEW_USER_NAME} && \
-    /usr/sbin/useradd --create-home --gid=${NEW_GID} --uid=${NEW_UID} \
-    --shell=${SHELL} --home-dir=${HOME_DIRECTORY} \
-    --password=${NEW_PASSWD_ENCRYPTED} ${NEW_USER_NAME}
+RUN USER_PASSWD=$(/usr/bin/pwgen --capitalize --numerals --symbols 10 1) && \
+    USER_PASSWD_ENCRYPTED="$(echo ${USER_PASSWD} | /usr/bin/openssl passwd -1 -stdin )" && \
+    echo "USER_NAME             = ${USER_NAME}" >> /root/image-user.txt && \
+    echo "USER_UID              = ${USER_UID} " >> /root/image-user.txt && \
+    echo "USER_GROUP            = ${USER_GROUP} " >> /root/image-user.txt && \
+    echo "USER_GID              = ${USER_GID} " >> /root/image-user.txt && \
+    echo "USER_HOME             = ${USER_HOME}" >> /root/image-user.txt && \
+    echo "USER_SHELL            = ${USER_SHELL}" >> /root/image-user.txt && \
+    echo "USER_PASSWD           = ${USER_PASSWD}" >> /root/image-user.txt && \
+    echo "USER_PASSWD_ENCRYPTED = ${USER_PASSWD_ENCRYPTED}" >> /root/image-user.txt && \
+    echo "creating user ${USER_NAME}:${USER_GROUP} (${USER_UID}:${USER_GID}) ..." && \
+    /usr/sbin/groupadd --force --gid ${USER_GID} ${USER_GROUP} && \
+    /usr/sbin/useradd --create-home --gid=${USER_GID} --uid=${USER_UID} \
+    --shell=${USER_SHELL} --home-dir=${USER_HOME} \
+    --password=${USER_PASSWD_ENCRYPTED} ${USER_NAME}
 
-USER ${NEW_USER_NAME}:${NEW_USER_NAME}
+USER ${USER_NAME}:${USER_NAME}
 
 # Define the ENTRYPOINT
 #
